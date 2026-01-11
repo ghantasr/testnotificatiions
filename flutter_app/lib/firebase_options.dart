@@ -34,14 +34,14 @@ class DefaultFirebaseOptions {
     storageBucket: 'YOUR_STORAGE_BUCKET',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
+static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCbO6BmprDjPxVu-07c6Lm2REhmnVVbST4',
+    appId: '1:339246035010:android:b0dbb6a82ff3026d19fddb',
+    messagingSenderId: '339246035010',
+    projectId: 'notifications-3b378',
+    storageBucket: 'notifications-3b378.appspot.com',
   );
-
+  
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'YOUR_IOS_API_KEY',
     appId: 'YOUR_IOS_APP_ID',

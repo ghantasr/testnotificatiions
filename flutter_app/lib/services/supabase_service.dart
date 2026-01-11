@@ -2,12 +2,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
 
 class SupabaseService {
-  final SupabaseClient _client = Supabase.instance.client;
+  SupabaseClient? get _client {
+    try {
+      return Supabase.instance.client;
+    } catch (e) {
+      return null;
+    }
+  }
   
   // Get all notifications for a user
   Future<List<NotificationModel>> getNotifications(String userId) async {
+    if (_client == null) return [];
     try {
-      final response = await _client
+      final response = await _client!
           .from('notifications')
           .select()
           .eq('user_id', userId)
@@ -24,8 +31,9 @@ class SupabaseService {
   
   // Mark notification as read
   Future<bool> markAsRead(String notificationId) async {
+    if (_client == null) return false;
     try {
-      await _client
+      await _client!
           .from('notifications')
           .update({'read_at': DateTime.now().toIso8601String()})
           .eq('id', notificationId);
@@ -38,11 +46,12 @@ class SupabaseService {
   }
   
   // Subscribe to real-time notifications
-  RealtimeChannel subscribeToNotifications(
+  RealtimeChannel? subscribeToNotifications(
     String userId,
     Function(NotificationModel) onNotification,
   ) {
-    return _client
+    if (_client == null) return null;
+    return _client!
         .channel('notifications:$userId')
         .onPostgresChanges(
           event: PostgresChangeEvent.insert,

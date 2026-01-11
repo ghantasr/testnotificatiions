@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/notification_provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -11,18 +11,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final String _userId = 'user123'; // Replace with actual user ID from auth
+  bool _initialized = false;
   
   @override
-  void initState() {
-    super.initState();
-    _initializeNotifications();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initializeNotifications();
+      });
+    }
   }
   
   Future<void> _initializeNotifications() async {
-    final provider = context.read<NotificationProvider>();
-    await provider.registerToken(_userId);
-    await provider.loadNotifications(_userId);
-    provider.subscribeToNotifications(_userId);
+    try {
+      final provider = context.read<NotificationProvider>();
+      await provider.registerToken(_userId);
+      // Temporarily disable loading/subscribing to break the loop
+      // await provider.loadNotifications(_userId);
+      // provider.subscribeToNotifications(_userId);
+    } catch (e) {
+      print('Error initializing notifications: $e');
+    }
   }
   
   @override

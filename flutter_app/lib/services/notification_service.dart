@@ -53,9 +53,6 @@ class NotificationService {
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     
-    // Handle background messages
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    
     // Handle notification opened app
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationOpenedApp);
   }
@@ -114,7 +111,7 @@ class NotificationService {
     
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/register-token'),
+        Uri.parse('http://192.168.1.40:3000/api/register-token'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': userId,
@@ -131,10 +128,4 @@ class NotificationService {
       print('Error registering token: $e');
     }
   }
-}
-
-// Top-level function for background message handler
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling background message: ${message.notification?.title}');
 }

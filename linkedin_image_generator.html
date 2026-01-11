@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification System - LinkedIn Post Image</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #canvas {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: crosshair;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input, select, textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        button {
+            background: #0a66c2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #004182;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .template-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .template-btn {
+            padding: 8px 16px;
+            background: #f0f2f5;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .template-btn.active {
+            background: #e7f3ff;
+            border-color: #0a66c2;
+            color: #0a66c2;
+        }
+
+        .info {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #004182;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-picker-group input[type="color"] {
+            width: 60px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="margin-bottom: 20px; color: #0a66c2;">🔔 Push Notification Post Image Generator</h1>
+        
+        <div class="template-selector">
+            <button class="template-btn active" onclick="setTemplate('modern')">Modern Gradient</button>
+            <button class="template-btn" onclick="setTemplate('minimal')">Minimal Clean</button>
+            <button class="template-btn" onclick="setTemplate('tech')">Tech Dark</button>
+            <button class="template-btn" onclick="setTemplate('code')">Code Style</button>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Title</label>
+                <input type="text" id="title" value="Push Notification System" oninput="updateCanvas()">
+            </div>
+            
+            <div class="control-group">
+                <label>Subtitle</label>
+                <input type="text" id="subtitle" value="Flutter + Firebase + Node.js" oninput="updateCanvas()">
+            </div>
+            
+            <div class="control-group">
+                <label>Your Name</label>
+                <input type="text" id="name" value="Your Name" oninput="updateCanvas()">
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Feature 1</label>
+                <input type="text" id="feature1" value="✅ Real-time push notifications" oninput="updateCanvas()">
+            </div>
+            
+            <div class="control-group">
+                <label>Feature 2</label>
+                <input type="text" id="feature2" value="✅ Flutter + Firebase integration" oninput="updateCanvas()">
+            </div>
+            
+            <div class="control-group">
+                <label>Feature 3</label>
+                <input type="text" id="feature3" value="✅ Node.js backend server" oninput="updateCanvas()">
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Primary Color</label>
+                <div class="color-picker-group">
+                    <input type="color" id="primaryColor" value="#0a66c2" oninput="updateCanvas()">
+                    <input type="text" id="primaryColorText" value="#0a66c2" oninput="updateColorFromText('primary')">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Secondary Color</label>
+                <div class="color-picker-group">
+                    <input type="color" id="secondaryColor" value="#00a0dc" oninput="updateCanvas()">
+                    <input type="text" id="secondaryColorText" value="#00a0dc" oninput="updateColorFromText('secondary')">
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas" width="1200" height="630"></canvas>
+        </div>
+
+        <div class="button-group">
+            <button onclick="downloadImage()">📥 Download Image (1200x630)</button>
+            <button onclick="downloadSquare()">📥 Download Square (1080x1080)</button>
+            <button onclick="updateCanvas()" style="background: #666;">🔄 Refresh</button>
+        </div>
+
+        <div class="info">
+            💡 <strong>Tip:</strong> LinkedIn recommended image sizes are 1200x630 (landscape) or 1080x1080 (square). 
+            Take a screenshot of your notification and overlay it on top of this background!
+        </div>
+
+        <div class="info" style="margin-top: 10px;">
+            📸 <strong>Pro tip:</strong> Use a photo editor to add your phone screenshot showing the notification on top of this background for maximum impact!
+        </div>
+    </div>
+
+    <script>
+        let currentTemplate = 'modern';
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function setTemplate(template) {
+            currentTemplate = template;
+            document.querySelectorAll('.template-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const templates = {
+                modern: { primary: '#0a66c2', secondary: '#00a0dc' },
+                minimal: { primary: '#2d3748', secondary: '#4a5568' },
+                tech: { primary: '#1a202c', secondary: '#2d3748' },
+                code: { primary: '#1e3a8a', secondary: '#3b82f6' }
+            };
+            
+            document.getElementById('primaryColor').value = templates[template].primary;
+            document.getElementById('secondaryColor').value = templates[template].secondary;
+            document.getElementById('primaryColorText').value = templates[template].primary;
+            document.getElementById('secondaryColorText').value = templates[template].secondary;
+            
+            updateCanvas();
+        }
+
+        function updateColorFromText(type) {
+            const colorText = document.getElementById(type + 'ColorText').value;
+            document.getElementById(type + 'Color').value = colorText;
+            updateCanvas();
+        }
+
+        function updateCanvas() {
+            const title = document.getElementById('title').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const name = document.getElementById('name').value;
+            const feature1 = document.getElementById('feature1').value;
+            const feature2 = document.getElementById('feature2').value;
+            const feature3 = document.getElementById('feature3').value;
+            const primaryColor = document.getElementById('primaryColor').value;
+            const secondaryColor = document.getElementById('secondaryColor').value;
+
+            // Update text inputs
+            document.getElementById('primaryColorText').value = primaryColor;
+            document.getElementById('secondaryColorText').value = secondaryColor;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw gradient background
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, primaryColor);
+            gradient.addColorStop(1, secondaryColor);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add overlay pattern
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            for (let i = 0; i < canvas.width; i += 40) {
+                for (let j = 0; j < canvas.height; j += 40) {
+                    ctx.fillRect(i, j, 20, 20);
+                }
+            }
+
+            // Draw white card
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+            ctx.shadowBlur = 30;
+            ctx.shadowOffsetY = 10;
+            roundRect(ctx, 80, 80, canvas.width - 160, canvas.height - 160, 20);
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+
+            // Draw notification icon
+            ctx.fillStyle = primaryColor;
+            ctx.beginPath();
+            ctx.arc(150, 150, 40, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Bell icon (simplified)
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 50px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🔔', 150, 170);
+
+            // Draw title
+            ctx.fillStyle = '#1a1a1a';
+            ctx.font = 'bold 72px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(title, 230, 170);
+
+            // Draw subtitle
+            ctx.fillStyle = '#666';
+            ctx.font = '36px Arial';
+            ctx.fillText(subtitle, 230, 220);
+
+            // Draw divider line
+            ctx.strokeStyle = primaryColor;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(100, 280);
+            ctx.lineTo(canvas.width - 100, 280);
+            ctx.stroke();
+
+            // Draw features
+            ctx.fillStyle = '#333';
+            ctx.font = '32px Arial';
+            ctx.fillText(feature1, 120, 350);
+            ctx.fillText(feature2, 120, 410);
+            ctx.fillText(feature3, 120, 470);
+
+            // Draw footer
+            ctx.fillStyle = '#999';
+            ctx.font = 'italic 28px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText(`Built by ${name}`, canvas.width - 100, canvas.height - 100);
+        }
+
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'notification-system-linkedin.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function downloadSquare() {
+            // Create square canvas
+            const squareCanvas = document.createElement('canvas');
+            squareCanvas.width = 1080;
+            squareCanvas.height = 1080;
+            const sqCtx = squareCanvas.getContext('2d');
+            
+            // Copy current canvas to center of square
+            const yOffset = (1080 - 630) / 2;
+            sqCtx.drawImage(canvas, 0, yOffset, 1080, 630);
+            
+            // Fill top and bottom with gradient
+            const primaryColor = document.getElementById('primaryColor').value;
+            const secondaryColor = document.getElementById('secondaryColor').value;
+            const gradient = sqCtx.createLinearGradient(0, 0, 1080, 1080);
+            gradient.addColorStop(0, primaryColor);
+            gradient.addColorStop(1, secondaryColor);
+            sqCtx.fillStyle = gradient;
+            sqCtx.fillRect(0, 0, 1080, yOffset);
+            sqCtx.fillRect(0, yOffset + 630, 1080, yOffset);
+            
+            const link = document.createElement('a');
+            link.download = 'notification-system-square.png';
+            link.href = squareCanvas.toDataURL();
+            link.click();
+        }
+
+        // Initial draw
+        updateCanvas();
+    </script>
+</body>
+</html>
