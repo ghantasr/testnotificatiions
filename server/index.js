@@ -4,9 +4,27 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const { createClient } = require('@supabase/supabase-js');
 const admin = require('firebase-admin');
+const path = require('path');
 
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+const requiredEnvVars = [
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'FIREBASE_PROJECT_ID',
+  'FIREBASE_PRIVATE_KEY',
+  'FIREBASE_CLIENT_EMAIL',
+];
+
+const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
+
+if (missingEnvVars.length) {
+  throw new Error(
+    `Missing required environment variables: ${missingEnvVars.join(', ')}. ` +
+      'Create a .env file (you can start from .env.example) or set them in your shell before running npm start.'
+  );
+}
 
 // Initialize Express
 const app = express();
