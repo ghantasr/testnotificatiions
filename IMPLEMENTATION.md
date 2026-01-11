@@ -10,6 +10,8 @@ This project demonstrates a complete notification system with:
 - **Push Notifications**: Firebase Cloud Messaging (FCM)
 - **Frontend**: Flutter mobile application
 
+> **Note**: This is a sample/template project with placeholder values and simplified implementations for demonstration purposes. Review all code and replace placeholders before production use.
+
 ## Architecture
 
 ```

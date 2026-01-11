@@ -27,6 +27,17 @@ notifications-sample-project/
 └── package.json              # Backend dependencies
 ```
 
+## ⚠️ Important Note
+
+This is a **sample/template project**. The code contains placeholder values and simplified error handling for demonstration purposes. Before using in production:
+
+- Replace all placeholder credentials with your actual Firebase and Supabase credentials
+- Configure proper environment-based URLs (not hardcoded localhost)
+- Implement proper logging instead of print statements
+- Add authentication and authorization
+- Implement comprehensive error handling
+- Add rate limiting and security measures
+
 ## 🚀 Quick Start
 
 ### Prerequisites
